@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CuentaVista } from 'src/cuentas-vista/entities/cuentas-vista.entity';
 
 export class Usuario {
   @ApiProperty()
@@ -11,6 +12,6 @@ export class Usuario {
   public contrasena: string; // contraseña del usuario
   @ApiProperty()
   public puntosAcumulados: number; // (número de puntos de recompensa acumulados)
-//   @ApiProperty()
-//   public cuentaVista: CuentaVista[]; // cuenta vista del usuario
+  @ApiProperty()
+  public cuentaVista: CuentaVista; // cuenta vista del usuario
 }
