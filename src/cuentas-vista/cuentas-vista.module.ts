@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { CuentasVistaService } from './cuentas-vista.service';
 import { CuentasVistaController } from './cuentas-vista.controller';
-import { UsuariosService } from 'src/usuarios/usuarios.service';
 import { UsuariosModule } from 'src/usuarios/usuarios.module';
 
 @Module({
   controllers: [CuentasVistaController],
   providers: [CuentasVistaService],
-  imports: [UsuariosModule],
+  imports: [forwardRef(() => UsuariosModule)],
+  exports: [CuentasVistaService],
 })
 export class CuentasVistaModule {}
