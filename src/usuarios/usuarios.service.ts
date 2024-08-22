@@ -7,7 +7,7 @@ import { BlobOptions } from 'buffer';
 @Injectable()
 export class UsuariosService {
 
-  private usuarios: Usuario[] = []
+  public usuarios: Usuario[] = []
 
   create(createUsuarioDto: CreateUsuarioDto) {
     const usuario: Usuario = new Usuario();
