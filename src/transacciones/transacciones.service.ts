@@ -1,38 +1,50 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateTransaccioneDto } from './dto/create-transaccione.dto';
 import { UpdateTransaccioneDto } from './dto/update-transaccione.dto';
 import { Transaccion } from './entities/transaccione.entity';
+import { UsuariosService } from 'src/usuarios/usuarios.service';
 
 @Injectable()
 export class TransaccionesService {
-  private transacciones: Transaccion[] = []
+  constructor(
+    @Inject(forwardRef(() => UsuariosService))
+    private readonly usuariosService: UsuariosService
+  ) {}
 
-  // create(createTransaccioneDto: CreateTransaccioneDto) {
-  //   return 'This action adds a new transaccione';
+  // public transacciones: Transaccion[] = []
+  // public transacciones: Transaccion[] = this.usuariosService.transacciones
+
+  // findAll(tipo?: string): Transaccion[] {
+  //   let transaccionFilter: Transaccion[] = []
+  //   if(tipo){
+  //     transaccionFilter = 
+  //       this.transacciones.filter((elemento: Transaccion) => elemento.tipo == tipo);
+  //     return transaccionFilter
+  //   }
+  //   else{
+  //     return this.transacciones
+  //   }
+  // }
+
+  // findOne(id: number): Transaccion { 
+  //   const transaccion = this.transacciones.find((element: Transaccion) => element.id == id);
+  //   return transaccion  
   // }
 
   findAll(tipo?: string): Transaccion[] {
     let transaccionFilter: Transaccion[] = []
     if(tipo){
       transaccionFilter = 
-        this.transacciones.filter((elemento: Transaccion) => elemento.tipo == tipo);
+        this.usuariosService.transacciones.filter((elemento: Transaccion) => elemento.tipo == tipo);
       return transaccionFilter
     }
     else{
-      return this.transacciones
+      return this.usuariosService.transacciones
     }
   }
 
   findOne(id: number): Transaccion { 
-    const transaccion = this.transacciones.find((element: Transaccion) => element.id == id);
+    const transaccion = this.usuariosService.transacciones.find((element: Transaccion) => element.id == id);
     return transaccion  
   }
-
-  // update(id: number, updateTransaccioneDto: UpdateTransaccioneDto) {
-  //   return `This action updates a #${id} transaccione`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} transaccione`;
-  // }
 }

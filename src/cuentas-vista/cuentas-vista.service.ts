@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateCuentasVistaDto } from './dto/create-cuentas-vista.dto';
 import { UpdateCuentasVistaDto } from './dto/update-cuentas-vista.dto';
 import { CuentaVista } from './entities/cuentas-vista.entity';
@@ -7,8 +7,10 @@ import { Usuario } from 'src/usuarios/entities/usuario.entity';
 
 @Injectable()
 export class CuentasVistaService {
-  constructor(private readonly usuariosService: UsuariosService) {}
-  private cuentasVista: CuentaVista[] = []
+  constructor(
+    @Inject(forwardRef(() => UsuariosService))
+    private readonly usuariosService: UsuariosService) {}
+  public cuentasVista: CuentaVista[] = []
 
   create(createCuentasVistaDto: CreateCuentasVistaDto) {
     const cuentaVista: CuentaVista = new CuentaVista();
