@@ -7,6 +7,7 @@ import { TransaccionesService } from 'src/transacciones/transacciones.service';
 import { TipoTransaccion } from 'src/transacciones/entities/tipoTransaccion';
 import { CuentasVistaService } from 'src/cuentas-vista/cuentas-vista.service';
 import { CuentaVista } from 'src/cuentas-vista/entities/cuentas-vista.entity';
+import { ErrorStatus } from 'src/error-status';
 
 @Injectable()
 export class UsuariosService {
@@ -201,48 +202,42 @@ export class UsuariosService {
 
   retiroCuenta(idUsuario: number, retiro: number){
     let usuario = this.findOne(idUsuario);
+
     // NO existe usuario
     if(!usuario){
-      return 0;
+      throw new ErrorStatus('El usuario no existe', 401)
     }
-    //Si existe el usuario
-    else{
-      // Pero no tiene cuenta vista
-      if(usuario.cuentaVista == undefined || !usuario.cuentaVista.habilitada){
-        return 1;
-      }
-      // cuenta vista si existe
-      else{
-        // No tiene suficiente saldo para hacer el retiro de la cuenta
-        if(usuario.cuentaVista.saldo < retiro){
-          return 2;
-        }
-        // Suficiente saldo para hacer retiro
-        else{
-          // encontrar elemento que corresponde del array de cuentas en base a id
-          const elemCuentaUsuario: number = this.cuentasVistaService.cuentasVista.findIndex(
-            (element: CuentaVista ) => element.id == usuario.cuentaVista.id)
-          // retirar saldo de la cuenta
-          this.cuentasVistaService.cuentasVista[elemCuentaUsuario].saldo -= +retiro
-          // Crear dato que tendra toda la informacion del retiro
-          const transaccion: Transaccion = new Transaccion()
-          // transaccion.id = this.transaccionesService.transacciones.length + 1
-          transaccion.id = this.transacciones.length + 1
-          transaccion.monto = +retiro
-          transaccion.tipo = TipoTransaccion.RETIRO
-          transaccion.fecha = new Date()
-          transaccion.emisor = usuario.cuentaVista.id
-          transaccion.receptor = usuario.cuentaVista.id
-          // Agregar transaccion en el array de transacciones
-          // this.transaccionesService.transacciones.push(transaccion);
-          this.transacciones.push(transaccion);
-          // Registrar transaccion en cuentas vista
-          this.cuentasVistaService.cuentasVista[elemCuentaUsuario].historialTransacciones.push(transaccion);
-          return 3;
 
-        }
-      }
+    // Pero no tiene cuenta vista
+    if(usuario.cuentaVista == undefined || !usuario.cuentaVista.habilitada){
+      throw new ErrorStatus('Usuario no tiene asignado una cuenta vista.', 400)
     }
+
+    // No tiene suficiente saldo para hacer el retiro de la cuenta
+    if(usuario.cuentaVista.saldo < retiro){
+      throw new ErrorStatus('No hay saldo suficiente para realizar el retiro.', 400)
+    }
+
+    // encontrar elemento que corresponde del array de cuentas en base a id
+    const elemCuentaUsuario: number = this.cuentasVistaService.cuentasVista.findIndex(
+      (element: CuentaVista ) => element.id == usuario.cuentaVista.id)
+    // retirar saldo de la cuenta
+    this.cuentasVistaService.cuentasVista[elemCuentaUsuario].saldo -= +retiro
+    // Crear dato que tendra toda la informacion del retiro
+    const transaccion: Transaccion = new Transaccion()
+    // transaccion.id = this.transaccionesService.transacciones.length + 1
+    transaccion.id = this.transacciones.length + 1
+    transaccion.monto = +retiro
+    transaccion.tipo = TipoTransaccion.RETIRO
+    transaccion.fecha = new Date()
+    transaccion.emisor = usuario.cuentaVista.id
+    transaccion.receptor = usuario.cuentaVista.id
+    // Agregar transaccion en el array de transacciones
+    // this.transaccionesService.transacciones.push(transaccion);
+    this.transacciones.push(transaccion);
+    // Registrar transaccion en cuentas vista
+    this.cuentasVistaService.cuentasVista[elemCuentaUsuario].historialTransacciones.push(transaccion);
+    return 3;
 
   }
 

@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, Query, Put } from '@nestjs/common';
-import { UsuariosService } from './usuarios.service';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res } from '@nestjs/common';
+import { ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { Response } from 'express';
+import { TipoTransaccion } from 'src/transacciones/entities/tipoTransaccion';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
-import { query, Response } from 'express';
-import { ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { Usuario } from './entities/usuario.entity';
-import { TipoTransaccion } from 'src/transacciones/entities/tipoTransaccion';
+import { UsuariosService } from './usuarios.service';
 
 
 
@@ -123,19 +123,17 @@ export class UsuariosController {
     @Param('idUsuario') idUsuario: number,
     @Param('monto') monto: number,
     @Res() response: Response): void{
-    
-    const retirar: number = this.usuariosService.retiroCuenta(idUsuario,monto);
-    if(retirar == 0){
-      response.status(404).send('No existe usuario con el id ingresado.')
-    }
-    else if(retirar == 1){
-      response.status(400).send('Usuario no tiene asignado una cuenta vista.')
-    }
-    else if(retirar == 2){
-      response.status(500).send('No hay saldo suficiente para realizar el retiro.')
-    }
-    else if(retirar == 3){
+    try {
+      this.usuariosService.retiroCuenta(idUsuario,monto);
       response.status(200).send('Retiro realizado de manera exitosa.')
+    } catch (error) {
+      try {
+        response.status(error.status).send(error.message)
+      } catch (error2) {
+        console.log(error);
+        console.log(error2);
+        response.status(500).send("EL ERROR NO SE MANEJO CORRECTAMENTE")
+      }
     }
   }
 

@@ -11,7 +11,7 @@ export class TransaccionesService {
     private readonly usuariosService: UsuariosService
   ) {}
 
-  // public transacciones: Transaccion[] = []
+  public transacciones: Transaccion[] = []
   // public transacciones: Transaccion[] = this.usuariosService.transacciones
 
   // findAll(tipo?: string): Transaccion[] {
